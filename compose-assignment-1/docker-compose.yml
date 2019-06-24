@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  drupal:
+    image: drupal:8.6 # this will use the latest version of 8.6.x
+    ports:
+      - '8080:80' # expose 8080 on host and sent to 80 in container
+    volumes:
+      - dpModules:/var/www/html/modules
+      - dpProfiles:/var/www/html/profiles
+      - dpThemes:/var/www/html/themes
+      # this takes advantage of the feature in Docker that a new anonymous
+      # volume (which is what we're creating here) will be initialized with the
+      # existing content of the image at the same location
+      - dpSites:/var/www/html/sites  
+    depends_on: 
+      - db
+
+  db:
+    image: postgres:10  # this will use httpd:latest
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=drupal
+      - POSTGRES_PASSWORD=secret
+
+volumes:
+  db:
+  dpModules:
+  dpProfiles:
+  dpThemes:
+  dpSites:
